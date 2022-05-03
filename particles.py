@@ -3,27 +3,37 @@ from settings import *
 from support import import_folder
 
 class Particles(pygame.sprite.Sprite):
-	def __init__(self, player, groups, type):
+	def __init__(self, target, groups, type):
 		super().__init__(groups)
 
 		self.vel = pygame.math.Vector2()
 		self.frame_index = 0
 		self.frame_rate = 0.2
-		self.facing = player.facing
+		self.facing = target.facing
 		
 		self.animations = import_folder(f'img/particles/{type}/')
 		self.image = self.animations[self.frame_index]
-		self.rect = self.image.get_rect(center = player.rect.center)
+		self.rect = self.image.get_rect(center = target.rect.center)
 
 		if type == 'run':
 			if self.facing == 1:
-				self.rect = self.image.get_rect(bottomright = player.rect.midbottom)
+				self.rect = self.image.get_rect(bottomright = target.rect.midbottom)
 			else:
 				self.image = pygame.transform.flip(self.image, True, False)
-				self.rect = self.image.get_rect(bottomleft = player.rect.midbottom)
+				self.rect = self.image.get_rect(bottomleft = target.rect.midbottom)
 
-		if type == 'jump':
-			self.rect = self.image.get_rect(midbottom = player.rect.midbottom)	
+		elif type == 'jump':
+			self.rect = self.image.get_rect(midbottom = target.rect.midbottom)
+
+		elif type == 'hover':
+			self.rect = self.image.get_rect(midtop = target.rect.midbottom)		
+
+		else:
+			if target.facing == 1:
+				self.rect = self.image.get_rect(center = target.rect.center)
+			else:
+				self.image = pygame.transform.flip(self.image, True, False)
+				self.rect = self.image.get_rect(center = target.rect.center)
 
 
 	def animate(self, animation_type, direction_specific):
